@@ -1,4 +1,4 @@
-FROM debian:bookworm
+FROM eclipse-temurin:25-jre-noble
 
 ENV SERVER_URL="https://piston-data.mojang.com/v1/objects/3872a7f07a1a595e651aef8b058dfc2bb3772f46/server.jar"
 LABEL MINECRAFT_VERSION="26.1"
@@ -8,14 +8,9 @@ LABEL org.opencontainers.image.description="Minecraft Server"
 EXPOSE 25565
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install --yes --no-install-recommends wget ca-certificates gpg apt-transport-https inotify-tools catatonit && \
-    wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor | tee /etc/apt/trusted.gpg.d/adoptium.gpg && \
-    echo "deb https://packages.adoptium.net/artifactory/deb bookworm main" > /etc/apt/sources.list.d/adoptium.list && \
-    apt-get update && \
-    apt-get install --yes temurin-25-jre && \
-    apt-get clean && \
+    apt-get install --yes --no-install-recommends wget ca-certificates catatonit && \
     wget "${SERVER_URL}" -O /minecraft_server.jar && \
-    apt-get remove --yes wget gpg apt-transport-https && \
+    apt-get remove --yes wget && \
     apt-get autoremove --yes && \
     rm -rf /var/cache/apt/archives /var/lib/apt/lists/* && \
     echo "eula=TRUE" > /eula.txt
